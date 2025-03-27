@@ -9,6 +9,8 @@ import Index from "@/pages/Index";
 import Login from "@/pages/Login";
 import Home from "@/pages/Home";
 import MovieDetails from "@/pages/MovieDetails";
+import TVShows from "@/pages/TVShows";
+import TVShowDetails from "@/pages/TVShowDetails";
 import Payment from "@/pages/Payment";
 import Admin from "@/pages/Admin";
 import NotFound from "@/pages/NotFound";
@@ -29,6 +31,8 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/home" element={<Home />} />
             <Route path="/movies/:id" element={<MovieDetails />} />
+            <Route path="/tv-shows" element={<TVShows />} />
+            <Route path="/tv-shows/:id" element={<TVShowDetails />} />
             <Route path="/payment/:id" element={<Payment />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
