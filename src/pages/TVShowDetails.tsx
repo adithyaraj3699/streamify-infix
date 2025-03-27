@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -7,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import TVShowCard from "@/components/TVShowCard";
 import { useToast } from "@/hooks/use-toast";
+import WishlistButton from "@/components/WishlistButton";
 
 const TVShowDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -73,7 +73,6 @@ const TVShowDetails = () => {
     });
   };
 
-  // Generate dummy episodes
   const generateEpisodes = (season: number) => {
     const episodesPerSeason = tvShow ? Math.ceil(tvShow.episodes / tvShow.seasons) : 0;
     return Array.from({ length: episodesPerSeason }, (_, i) => ({
@@ -166,9 +165,7 @@ const TVShowDetails = () => {
                       Play
                     </Button>
                   )}
-                  <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
-                    Add to List
-                  </Button>
+                  <WishlistButton item={tvShow} type="tvshow" />
                 </div>
                 <p className="text-foreground/90">{tvShow.description}</p>
               </div>

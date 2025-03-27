@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -7,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import MovieCard from "@/components/MovieCard";
 import { useToast } from "@/hooks/use-toast";
+import WishlistButton from "@/components/WishlistButton";
 
 const MovieDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -152,9 +152,7 @@ const MovieDetails = () => {
                       Play
                     </Button>
                   )}
-                  <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
-                    Add to List
-                  </Button>
+                  <WishlistButton item={movie} type="movie" />
                 </div>
                 <p className="text-foreground/90">{movie.description}</p>
               </div>
