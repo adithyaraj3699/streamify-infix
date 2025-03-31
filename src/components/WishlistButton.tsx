@@ -31,7 +31,11 @@ const WishlistButton = ({
         description: `${item.title} has been removed from your list`,
       });
     } else {
-      addToWishlist({ type, item });
+      if (type === "movie") {
+        addToWishlist({ type: "movie", item: item as Movie });
+      } else {
+        addToWishlist({ type: "tvshow", item: item as TVShow });
+      }
       toast({
         title: "Added to list",
         description: `${item.title} has been added to your list`,
