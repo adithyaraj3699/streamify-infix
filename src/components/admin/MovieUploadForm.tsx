@@ -9,7 +9,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { addMovie } from "@/lib/adminService";
-import { Checkbox } from "@/components/ui/checkbox";
 
 interface MovieFormData {
   title: string;
@@ -21,6 +20,7 @@ interface MovieFormData {
   price: number;
   isPremium: boolean;
   audioFormat: boolean;
+  mp4Format: boolean;
   cast: string;
 }
 
@@ -28,6 +28,7 @@ const MovieUploadForm = () => {
   const { toast } = useToast();
   const [isPremium, setIsPremium] = useState(false);
   const [isAudioFormat, setIsAudioFormat] = useState(false);
+  const [isMp4Format, setIsMp4Format] = useState(false);
   const { register, handleSubmit, reset, formState: { errors } } = useForm<MovieFormData>();
 
   const onSubmit = (data: MovieFormData) => {
@@ -50,7 +51,8 @@ const MovieUploadForm = () => {
         isPremium: isPremium,
         rating: 0,
         duration: "2h 10m", // Default value
-        isAudioFormat: isAudioFormat
+        isAudioFormat: isAudioFormat,
+        isMp4Format: isMp4Format
       };
 
       // Call the service to add the movie
@@ -66,6 +68,7 @@ const MovieUploadForm = () => {
       reset();
       setIsPremium(false);
       setIsAudioFormat(false);
+      setIsMp4Format(false);
     } catch (error) {
       toast({
         title: "Error",
@@ -188,13 +191,22 @@ const MovieUploadForm = () => {
                 <Label htmlFor="premium">Premium Content</Label>
               </div>
               
-              <div className="flex items-center space-x-2 mt-4">
+              <div className="flex items-center space-x-2 mt-2">
                 <Switch
                   id="audioFormat"
                   checked={isAudioFormat}
                   onCheckedChange={setIsAudioFormat}
                 />
                 <Label htmlFor="audioFormat">MP3 Audio Format</Label>
+              </div>
+              
+              <div className="flex items-center space-x-2 mt-2">
+                <Switch
+                  id="mp4Format"
+                  checked={isMp4Format}
+                  onCheckedChange={setIsMp4Format}
+                />
+                <Label htmlFor="mp4Format">MP4 Video Format</Label>
               </div>
             </div>
           </div>
