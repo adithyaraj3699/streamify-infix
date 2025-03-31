@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -7,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import MovieCard from "@/components/MovieCard";
 import { useToast } from "@/hooks/use-toast";
 import WishlistButton from "@/components/WishlistButton";
+import RatingButtons from "@/components/RatingButtons";
 
 const MovieDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -154,6 +156,9 @@ const MovieDetails = () => {
                   )}
                   <WishlistButton item={movie} type="movie" />
                 </div>
+                
+                <RatingButtons itemId={movie.id} itemType="movie" className="mt-4" />
+                
                 <p className="text-foreground/90">{movie.description}</p>
               </div>
             )}

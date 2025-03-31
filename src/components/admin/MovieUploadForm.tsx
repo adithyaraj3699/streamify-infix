@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { addMovie } from "@/lib/adminService";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface MovieFormData {
   title: string;
@@ -19,27 +20,37 @@ interface MovieFormData {
   imageUrl: string;
   price: number;
   isPremium: boolean;
+  audioFormat: boolean;
+  cast: string;
 }
 
 const MovieUploadForm = () => {
   const { toast } = useToast();
   const [isPremium, setIsPremium] = useState(false);
+  const [isAudioFormat, setIsAudioFormat] = useState(false);
   const { register, handleSubmit, reset, formState: { errors } } = useForm<MovieFormData>();
 
   const onSubmit = (data: MovieFormData) => {
     try {
+      // Convert genre and cast strings to arrays
+      const genreArray = data.genre.split(',').map(item => item.trim());
+      const castArray = data.cast.split(',').map(item => item.trim());
+      
       // Create the new movie object
       const newMovie = {
         title: data.title,
         description: data.description,
         year: parseInt(data.year.toString()),
-        genre: data.genre,
+        genre: genreArray,
         director: data.director,
-        imageUrl: data.imageUrl || "https://via.placeholder.com/500x750",
+        thumbnailUrl: data.imageUrl || "https://images.unsplash.com/photo-1578022761797-b8636ac1773c",
+        bannerUrl: data.imageUrl || "https://images.unsplash.com/photo-1578022761797-b8636ac1773c",
+        cast: castArray,
         price: parseFloat(data.price.toString()) || 0,
         isPremium: isPremium,
         rating: 0,
         duration: "2h 10m", // Default value
+        isAudioFormat: isAudioFormat
       };
 
       // Call the service to add the movie
@@ -54,6 +65,7 @@ const MovieUploadForm = () => {
       // Reset the form
       reset();
       setIsPremium(false);
+      setIsAudioFormat(false);
     } catch (error) {
       toast({
         title: "Error",
@@ -131,13 +143,23 @@ const MovieUploadForm = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="imageUrl">Poster URL</Label>
+              <Label htmlFor="cast">Cast</Label>
               <Input
-                id="imageUrl"
-                {...register("imageUrl")}
-                placeholder="https://example.com/image.jpg"
+                id="cast"
+                {...register("cast", { required: "Cast is required" })}
+                placeholder="Actor 1, Actor 2, Actor 3"
               />
+              {errors.cast && <p className="text-sm text-red-500">{errors.cast.message}</p>}
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="imageUrl">Poster URL</Label>
+            <Input
+              id="imageUrl"
+              {...register("imageUrl")}
+              placeholder="https://example.com/image.jpg"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -155,14 +177,25 @@ const MovieUploadForm = () => {
               />
               {errors.price && <p className="text-sm text-red-500">{errors.price.message}</p>}
             </div>
-
-            <div className="flex items-center space-x-2 pt-8">
-              <Switch
-                id="premium"
-                checked={isPremium}
-                onCheckedChange={setIsPremium}
-              />
-              <Label htmlFor="premium">Premium Content</Label>
+            
+            <div className="space-y-2 flex flex-col justify-center">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="premium"
+                  checked={isPremium}
+                  onCheckedChange={setIsPremium}
+                />
+                <Label htmlFor="premium">Premium Content</Label>
+              </div>
+              
+              <div className="flex items-center space-x-2 mt-4">
+                <Switch
+                  id="audioFormat"
+                  checked={isAudioFormat}
+                  onCheckedChange={setIsAudioFormat}
+                />
+                <Label htmlFor="audioFormat">MP3 Audio Format</Label>
+              </div>
             </div>
           </div>
         </form>

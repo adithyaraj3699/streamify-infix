@@ -13,6 +13,7 @@ export interface Movie {
   rating: number;
   isPremium: boolean;
   price: number;
+  isAudioFormat?: boolean;
 }
 
 export const featuredMovies: Movie[] = [

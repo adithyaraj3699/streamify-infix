@@ -55,6 +55,12 @@ export const addMovie = (movie: Omit<Movie, "id">): Movie => {
   return newMovie;
 };
 
+// Function to delete a movie (local only for now)
+export const deleteMovie = (id: string): void => {
+  // In a real app, this would be an API call to delete from a database
+  console.log("Deleted movie with ID:", id);
+};
+
 // Function to add a new TV show (local only for now)
 export const addTVShow = (tvShow: Omit<TVShow, "id">): TVShow => {
   const newTVShow: TVShow = {
