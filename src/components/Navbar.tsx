@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Logo from "./Logo";
 import { Button } from "@/components/ui/button";
+import { Award } from "lucide-react";
 
 const Navbar = () => {
   const location = useLocation();
@@ -86,7 +87,11 @@ const Navbar = () => {
                   </Button>
                 </Link>
               )}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-4">
+                <Link to="/watch-ads" className="hidden md:flex items-center text-sm font-medium text-yellow-500">
+                  <Award className="w-4 h-4 mr-1" />
+                  <span>{user?.points || 0} points</span>
+                </Link>
                 <div className="hidden md:block text-sm font-medium">
                   {user?.name}
                 </div>

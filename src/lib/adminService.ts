@@ -42,6 +42,57 @@ export const getRecentActivity = () => {
   ];
 };
 
+// Function to get users data (mocked)
+export const getUsersData = () => {
+  return [
+    { 
+      id: "1", 
+      name: "John Doe", 
+      email: "john@example.com", 
+      points: 1250,
+      status: "Active",
+      joinDate: "2023-01-15",
+      lastActive: "2023-10-15"
+    },
+    { 
+      id: "2", 
+      name: "Jane Smith", 
+      email: "jane@example.com", 
+      points: 980,
+      status: "Active",
+      joinDate: "2023-02-20",
+      lastActive: "2023-10-14"
+    },
+    { 
+      id: "3", 
+      name: "Mike Johnson", 
+      email: "mike@example.com", 
+      points: 540,
+      status: "Inactive",
+      joinDate: "2023-03-10",
+      lastActive: "2023-09-25"
+    },
+    { 
+      id: "4", 
+      name: "Sarah Williams", 
+      email: "sarah@example.com", 
+      points: 2100,
+      status: "Active",
+      joinDate: "2023-01-05",
+      lastActive: "2023-10-15"
+    },
+    { 
+      id: "5", 
+      name: "Alex Brown", 
+      email: "alex@example.com", 
+      points: 320,
+      status: "Active",
+      joinDate: "2023-05-18",
+      lastActive: "2023-10-12"
+    }
+  ];
+};
+
 // Function to add a new movie (local only for now)
 export const addMovie = (movie: Omit<Movie, "id">): Movie => {
   const newMovie: Movie = {

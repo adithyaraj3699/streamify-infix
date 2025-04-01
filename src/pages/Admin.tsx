@@ -8,6 +8,7 @@ import UserGrowthChart from "@/components/admin/UserGrowthChart";
 import PopularGenresChart from "@/components/admin/PopularGenresChart";
 import RecentActivity from "@/components/admin/RecentActivity";
 import MovieUploadForm from "@/components/admin/MovieUploadForm";
+import UserPointsDetails from "@/components/admin/UserPointsDetails";
 
 const Admin = () => {
   const { isAuthenticated, user } = useAuth();
@@ -87,6 +88,7 @@ const Admin = () => {
           </TabsContent>
           
           <TabsContent value="users" className="space-y-6">
+            <UserPointsDetails />
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
               <h3 className="text-xl font-semibold mb-4">User Management</h3>
               <p className="text-muted-foreground">

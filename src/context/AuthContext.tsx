@@ -1,11 +1,13 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { useAuthExtended } from "@/hooks/use-auth-extended";
 
 interface User {
   id: string;
   name: string;
   email: string;
   isAdmin: boolean;
+  points: number;
 }
 
 interface AuthContextType {
@@ -14,6 +16,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
+  updateUserPoints: (pointsToAdd: number) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,6 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const { userPoints, updateUserPoints, initializePoints } = useAuthExtended();
 
   useEffect(() => {
     // Check if user is already logged in
@@ -28,8 +32,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    initializePoints();
     setLoading(false);
-  }, []);
+  }, [initializePoints]);
+
+  // Update user object when points change
+  useEffect(() => {
+    if (user) {
+      const updatedUser = { ...user, points: userPoints };
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+    }
+  }, [userPoints, user]);
 
   const login = async (email: string, password: string) => {
     setLoading(true);
@@ -43,7 +57,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       name: email.split("@")[0],
       email,
       // Set isAdmin to true if email contains 'admin'
-      isAdmin: email.toLowerCase().includes("admin")
+      isAdmin: email.toLowerCase().includes("admin"),
+      points: userPoints
     };
     
     setUser(mockUser);
@@ -63,7 +78,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         loading,
         login,
         logout,
-        isAuthenticated: !!user
+        isAuthenticated: !!user,
+        updateUserPoints
       }}
     >
       {children}
