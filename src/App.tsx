@@ -17,6 +17,8 @@ import Payment from "@/pages/Payment";
 import Admin from "@/pages/Admin";
 import NotFound from "@/pages/NotFound";
 import Navbar from "@/components/Navbar";
+import WatchAds from "@/pages/WatchAds";
+import UploadShortFilm from "@/pages/UploadShortFilm";
 
 const queryClient = new QueryClient();
 
@@ -38,7 +40,10 @@ const App = () => (
               <Route path="/tv-shows" element={<TVShows />} />
               <Route path="/tv-shows/:id" element={<TVShowDetails />} />
               <Route path="/payment/:id" element={<Payment />} />
+              <Route path="/payment" element={<Payment />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/watch-ads" element={<WatchAds />} />
+              <Route path="/upload-shortfilm" element={<UploadShortFilm />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
