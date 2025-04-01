@@ -10,11 +10,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { DollarSign, CreditCard, Calendar, Zap } from "lucide-react";
+import { DollarSign, CreditCard, Calendar, Zap, Award } from "lucide-react";
+import PointsRedemption from "@/components/payment/PointsRedemption";
 
 const Payment = () => {
   const { id } = useParams<{ id: string }>();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, updateUserPoints } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [paymentMethod, setPaymentMethod] = useState("credit-card");
@@ -25,6 +26,7 @@ const Payment = () => {
   const [cvv, setCvv] = useState("");
   const [paymentType, setPaymentType] = useState("one-time");
   const [subscriptionPlan, setSubscriptionPlan] = useState("monthly");
+  const [pointsToUse, setPointsToUse] = useState(0);
   
   const movie = id ? getMovieById(id) : undefined;
 
@@ -40,10 +42,17 @@ const Payment = () => {
     }
   }, [isAuthenticated, movie, navigate, paymentType]);
 
+  // Reset points when payment method changes
+  useEffect(() => {
+    if (paymentMethod !== "points") {
+      setPointsToUse(0);
+    }
+  }, [paymentMethod]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!cardNumber || !cardName || !expiryDate || !cvv) {
+    if (paymentMethod === "credit-card" && (!cardNumber || !cardName || !expiryDate || !cvv)) {
       toast({
         title: "Error",
         description: "Please fill out all fields",
@@ -57,7 +66,24 @@ const Payment = () => {
     // Simulate payment processing
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    if (paymentType === "subscription") {
+    // Handle points redemption
+    if (pointsToUse > 0 && user) {
+      updateUserPoints(-pointsToUse);
+      toast({
+        title: "Points Redeemed!",
+        description: `You used ${pointsToUse} points for a $${(pointsToUse / 100).toFixed(2)} discount.`,
+      });
+    }
+    
+    if (paymentMethod === "points" && user && getRequiredPoints() <= (user.points || 0)) {
+      // Full payment with points
+      updateUserPoints(-getRequiredPoints());
+      
+      toast({
+        title: "Points Redeemed!",
+        description: `You used ${getRequiredPoints()} points to purchase this item.`,
+      });
+    } else if (paymentType === "subscription") {
       toast({
         title: "Subscription Activated!",
         description: `Your ${subscriptionPlan} subscription has been activated. Enjoy unlimited access!`,
@@ -82,6 +108,39 @@ const Payment = () => {
   // Calculate subscription price
   const getSubscriptionPrice = () => {
     return subscriptionPlan === "monthly" ? 9.99 : 99.99;
+  };
+  
+  // Calculate price after points discount
+  const getDiscountedPrice = () => {
+    const basePrice = paymentType === "subscription" 
+      ? getSubscriptionPrice() 
+      : (movie?.price || 0);
+    
+    const discount = pointsToUse / 100; // 100 points = $1
+    return Math.max(0, basePrice - discount);
+  };
+  
+  // Calculate required points for full payment
+  const getRequiredPoints = () => {
+    const price = paymentType === "subscription" 
+      ? getSubscriptionPrice() 
+      : (movie?.price || 0);
+    
+    return Math.ceil(price * 100); // $1 = 100 points
+  };
+  
+  // Maximum points user can apply
+  const getMaxPointsValue = () => {
+    const price = paymentType === "subscription" 
+      ? getSubscriptionPrice() 
+      : (movie?.price || 0);
+    
+    return Math.ceil(price * 100); // Full price in points
+  };
+  
+  // Handle points slider change
+  const handlePointsChange = (points: number) => {
+    setPointsToUse(points);
   };
 
   return (
@@ -172,10 +231,10 @@ const Payment = () => {
                   </Label>
                 </div>
                 <div>
-                  <RadioGroupItem value="points" id="points" className="peer sr-only" disabled={!user?.points || user.points < (paymentType === "subscription" ? 600 : (movie?.price || 0) * 100)} />
+                  <RadioGroupItem value="points" id="points" className="peer sr-only" disabled={!user?.points || user.points < getRequiredPoints()} />
                   <Label
                     htmlFor="points"
-                    className={`flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-brand-yellow [&:has([data-state=checked])]:border-brand-yellow ${(!user?.points || user.points < (paymentType === "subscription" ? 600 : (movie?.price || 0) * 100)) ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-brand-yellow [&:has([data-state=checked])]:border-brand-yellow ${(!user?.points || user.points < getRequiredPoints()) ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     <Award className="mb-2 h-4 w-4" />
                     <span className="text-sm font-medium">Use Points</span>
@@ -194,6 +253,16 @@ const Payment = () => {
                 </div>
               </RadioGroup>
             </div>
+
+            {/* Show points slider for partial payment when using credit card */}
+            {paymentMethod === "credit-card" && user?.points && user.points > 0 && (
+              <PointsRedemption
+                availablePoints={user.points}
+                maxPointsValue={getMaxPointsValue()}
+                pointsToUse={pointsToUse}
+                onPointsChange={handlePointsChange}
+              />
+            )}
 
             {paymentMethod === "credit-card" && (
               <div className="space-y-4">
@@ -261,9 +330,17 @@ const Payment = () => {
                     <span>${movie?.price.toFixed(2)}</span>
                   </div>
                 )}
+                
+                {pointsToUse > 0 && (
+                  <div className="flex justify-between py-1 text-brand-yellow">
+                    <span>Points Discount ({pointsToUse} points)</span>
+                    <span>-${(pointsToUse / 100).toFixed(2)}</span>
+                  </div>
+                )}
+                
                 <div className="flex justify-between py-1 font-medium border-t border-border mt-2 pt-2">
                   <span>Total</span>
-                  <span>${paymentType === "subscription" ? getSubscriptionPrice().toFixed(2) : movie?.price.toFixed(2)}</span>
+                  <span>${paymentMethod === "points" ? "0.00" : getDiscountedPrice().toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -274,8 +351,10 @@ const Payment = () => {
               disabled={isProcessing}
             >
               {isProcessing ? "Processing..." : paymentMethod === "points" 
-                ? "Use Points" 
-                : `Pay $${paymentType === "subscription" ? getSubscriptionPrice().toFixed(2) : movie?.price.toFixed(2)}`}
+                ? `Use ${getRequiredPoints()} Points` 
+                : pointsToUse > 0
+                  ? `Pay $${getDiscountedPrice().toFixed(2)} with ${pointsToUse} points`
+                  : `Pay $${paymentType === "subscription" ? getSubscriptionPrice().toFixed(2) : movie?.price.toFixed(2)}`}
             </Button>
           </form>
         </CardContent>
