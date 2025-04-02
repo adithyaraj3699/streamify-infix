@@ -80,7 +80,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
             <>
-              {user?.isAdmin && (
+              {user?.isAdmin === true && (
                 <Link to="/admin">
                   <Button variant="outline" size="sm" className="hidden md:inline-flex">
                     Admin

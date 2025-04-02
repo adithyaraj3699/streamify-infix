@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -167,8 +166,7 @@ const Home = () => {
                 year: show.year,
                 genre: show.genre,
                 isPremium: show.isPremium,
-                price: show.price,
-                type: "tv"
+                price: show.price
               }} />
             ))}
           </div>

@@ -56,8 +56,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       id: "1",
       name: email.split("@")[0],
       email,
-      // Set isAdmin to true if email contains 'admin'
-      isAdmin: email.toLowerCase().includes("admin"),
+      // Set isAdmin to true if email contains 'admin', ensuring it's a boolean
+      isAdmin: email.toLowerCase().includes("admin") ? true : false,
       points: userPoints
     };
     

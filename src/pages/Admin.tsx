@@ -21,7 +21,7 @@ const Admin = () => {
       return;
     }
     
-    if (!user?.isAdmin) {
+    if (user?.isAdmin !== true) {
       toast({
         title: "Access Denied",
         description: "You do not have admin privileges to access this page.",
@@ -31,7 +31,7 @@ const Admin = () => {
     }
   }, [isAuthenticated, user, navigate, toast]);
 
-  if (!isAuthenticated || !user?.isAdmin) {
+  if (!isAuthenticated || user?.isAdmin !== true) {
     return null;
   }
 
