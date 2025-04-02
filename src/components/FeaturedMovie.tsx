@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Movie } from "@/lib/moviesData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import WishlistButton from "./WishlistButton";
 
 interface FeaturedMovieProps {
   movie: Movie;
@@ -49,9 +50,7 @@ const FeaturedMovie = ({ movie }: FeaturedMovieProps) => {
                 Watch Now
               </Button>
             </Link>
-            <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
-              Add to List
-            </Button>
+            <WishlistButton item={movie} type="movie" variant="outline" />
           </div>
         </div>
       </div>

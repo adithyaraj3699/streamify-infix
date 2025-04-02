@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TVShow } from "@/lib/tvShowsData";
+import WishlistButton from "./WishlistButton";
 
 interface FeaturedTVShowProps {
   tvShow: TVShow;
@@ -48,9 +49,12 @@ const FeaturedTVShow = ({ tvShow }: FeaturedTVShowProps) => {
                   Watch Now
                 </Button>
               </Link>
-              <Button variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
-                More Info
-              </Button>
+              <WishlistButton 
+                item={tvShow} 
+                type="tvshow" 
+                variant="outline" 
+                className="border-white/30 text-white hover:bg-white/10"
+              />
             </div>
           </div>
         </div>
