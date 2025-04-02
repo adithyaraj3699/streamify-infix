@@ -166,7 +166,11 @@ const Home = () => {
                 year: show.year,
                 genre: show.genre,
                 isPremium: show.isPremium,
-                price: show.price
+                price: show.price,
+                duration: `${show.seasons} seasons`,
+                director: show.creator,
+                cast: show.cast,
+                rating: show.rating
               }} />
             ))}
           </div>
