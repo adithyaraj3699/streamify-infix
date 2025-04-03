@@ -4,7 +4,8 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Logo from "./Logo";
 import { Button } from "@/components/ui/button";
-import { Award } from "lucide-react";
+import { Award, Menu, X } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const Navbar = () => {
   const location = useLocation();
@@ -80,25 +81,60 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
             <>
-              {user?.isAdmin === true && (
-                <Link to="/admin">
-                  <Button variant="outline" size="sm" className="hidden md:inline-flex">
-                    Admin
-                  </Button>
-                </Link>
-              )}
-              <div className="flex items-center space-x-4">
-                <Link to="/watch-ads" className="hidden md:flex items-center text-sm font-medium text-yellow-500">
+              <div className="hidden md:flex items-center space-x-4">
+                {user?.isAdmin && (
+                  <Link to="/admin">
+                    <Button variant="outline" size="sm" className="border-white/20 hover:bg-white/10">
+                      Admin
+                    </Button>
+                  </Link>
+                )}
+                <Link to="/watch-ads" className="flex items-center text-sm font-medium text-yellow-500">
                   <Award className="w-4 h-4 mr-1" />
                   <span>{user?.points || 0} points</span>
                 </Link>
-                <div className="hidden md:block text-sm font-medium">
+                <div className="text-sm font-medium">
                   {user?.name}
                 </div>
                 <Button onClick={logout} variant="ghost" size="sm" className="text-brand-yellow hover:text-brand-yellow/90">
                   Sign Out
                 </Button>
               </div>
+
+              {/* Mobile menu */}
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[80%] sm:w-[350px]">
+                  <div className="flex flex-col h-full py-6">
+                    <div className="flex items-center justify-between mb-8">
+                      <Logo size="small" />
+                    </div>
+                    <nav className="flex flex-col space-y-6 flex-1">
+                      <Link to="/home" className="text-lg font-medium">Home</Link>
+                      <Link to="/movies" className="text-lg font-medium">Movies</Link>
+                      <Link to="/tv-shows" className="text-lg font-medium">TV Shows</Link>
+                      <Link to="/my-list" className="text-lg font-medium">My List</Link>
+                      {user?.isAdmin && (
+                        <Link to="/admin" className="text-lg font-medium">Admin</Link>
+                      )}
+                      <Link to="/watch-ads" className="flex items-center text-brand-yellow">
+                        <Award className="w-5 h-5 mr-2" />
+                        <span>{user?.points || 0} points</span>
+                      </Link>
+                    </nav>
+                    <div className="pt-6 border-t border-border mt-auto">
+                      <div className="mb-4 text-lg font-medium">{user?.name}</div>
+                      <Button onClick={logout} variant="outline" className="w-full">
+                        Sign Out
+                      </Button>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </>
           ) : (
             <Link to="/login">

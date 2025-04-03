@@ -7,6 +7,7 @@ interface User {
   name: string;
   email: string;
   isAdmin: boolean;
+  isUser: boolean;
   points: number;
 }
 
@@ -51,13 +52,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     
+    // Determine user role based on email
+    const isAdmin = email.toLowerCase().includes("admin");
+    const isUser = true; // All logged in accounts are users
+    
     // Mock user data - in a real app, this would come from your API
     const mockUser = {
       id: "1",
       name: email.split("@")[0],
       email,
-      // Set isAdmin to true if email contains 'admin', ensuring it's a boolean
-      isAdmin: email.toLowerCase().includes("admin") ? true : false,
+      isAdmin,
+      isUser,
       points: userPoints
     };
     
