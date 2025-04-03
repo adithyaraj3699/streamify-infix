@@ -33,13 +33,26 @@ const Login = () => {
     
     try {
       setIsLoading(true);
-      await login(email, password);
-      navigate("/home");
+      const success = await login(email, password);
       
-      toast({
-        title: "Welcome back!",
-        description: "You've successfully logged in.",
-      });
+      if (success) {
+        if (email.toLowerCase() === "admin@gmail.com" && password === "336699@admin") {
+          navigate("/admin");
+        } else {
+          navigate("/home");
+        }
+        
+        toast({
+          title: "Welcome back!",
+          description: "You've successfully logged in.",
+        });
+      } else {
+        toast({
+          title: "Login failed",
+          description: "Please check your credentials and try again",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       toast({
         title: "Login failed",
@@ -136,8 +149,8 @@ const Login = () => {
             </Button>
           </div>
           <div className="text-xs text-center text-muted-foreground">
-            <p>For admin access: use any email with "admin" in it</p>
-            <p>Example: admin@example.com / password</p>
+            <p>Admin login: admin@gmail.com / 336699@admin</p>
+            <p>For regular user: use any other email/password</p>
           </div>
         </CardFooter>
       </Card>

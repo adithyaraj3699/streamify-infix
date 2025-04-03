@@ -1,6 +1,7 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { useAuthExtended } from "@/hooks/use-auth-extended";
+import { useToast } from "@/hooks/use-toast";
 
 interface User {
   id: string;
@@ -14,7 +15,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
   updateUserPoints: (pointsToAdd: number) => void;
@@ -26,6 +27,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const { userPoints, updateUserPoints, initializePoints } = useAuthExtended();
+  const { toast } = useToast();
 
   useEffect(() => {
     // Check if user is already logged in
@@ -52,23 +54,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Determine user role based on email
-    const isAdmin = email.toLowerCase().includes("admin");
+    // Check for admin credentials
+    const isAdmin = email.toLowerCase() === "admin@gmail.com" && password === "336699@admin";
     const isUser = true; // All logged in accounts are users
     
-    // Mock user data - in a real app, this would come from your API
-    const mockUser = {
-      id: "1",
-      name: email.split("@")[0],
-      email,
-      isAdmin,
-      isUser,
-      points: userPoints
-    };
-    
-    setUser(mockUser);
-    localStorage.setItem("user", JSON.stringify(mockUser));
-    setLoading(false);
+    // Validate credentials
+    if (email && password) {
+      // Mock user data - in a real app, this would come from your API
+      const mockUser = {
+        id: "1",
+        name: email.split("@")[0],
+        email,
+        isAdmin,
+        isUser,
+        points: userPoints
+      };
+      
+      setUser(mockUser);
+      localStorage.setItem("user", JSON.stringify(mockUser));
+      setLoading(false);
+      return true;
+    } else {
+      toast({
+        title: "Login failed",
+        description: "Invalid credentials",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return false;
+    }
   };
 
   const logout = () => {
